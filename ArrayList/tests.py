@@ -2,7 +2,6 @@ import unittest
 # import List
 from List import List
 
-
 class TestCase(unittest.TestCase):
     def test_int(self):
         list = List('i', 1, 2, 3, 1, 8, 9)

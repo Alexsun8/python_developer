@@ -1,4 +1,35 @@
 from array import array
+from math import fabs
+
+
+class Ptr:
+    def __init__(self, data):
+        self.data = data
+        self.ptr = 0
+
+    def __next__(self):
+        if self.ptr == len(self.data)-1:
+            raise StopIteration
+        self.ptr += 1
+        return self.data[self.ptr]
+
+    def prev(self):
+        if fabs(self.ptr) == len(self.data)-1:
+            raise StopIteration
+        self.ptr -= 1
+        return self.data[self.ptr]
+
+    def __iadd__(self, num):
+        if (self.ptr+num) >= len(self.data):
+            raise StopIteration
+        self.ptr += num
+        return self.data[self.ptr]
+
+    def __isub__(self, num):
+        if fabs(self.ptr - num) >= len(self.data):
+            raise StopIteration
+        self.ptr -= num
+        return self.data[self.ptr]
 
 
 class List:
@@ -116,8 +147,7 @@ class List:
         # *=
         temp = self.data
         if num == 0:
-            del self.data
-            print("num == 0")
+            self.data = array(self.data.typecode)
         else:
             i = 1
             while i != num:
@@ -150,7 +180,8 @@ class List:
                 self.append(item)
 
     def __iter__(self):
-        return self.data.__iter__()
+        self.ptr = Ptr(self.data)
+        return self.ptr
 
     def __next__(self):
         return self.data.__next__()
@@ -167,13 +198,19 @@ class List:
 
     def remove(self, x):
         temp = self.data
-        self.data = array(self.data.typecode)
+        if self.data.typecode == 'u':
+            self.data = array(self.data.typecode, ['0' for i in range(len(temp)-1)])
+        else:
+            self.data = array(self.data.typecode, [0 for i in range(len(temp) - 1)])
         found = False
-        for item in temp:
+        for i,item in enumerate(temp):
             if item == x and not found:
                 found = True
             else:
-                self.append(item)
+                if found:
+                    self.data[i-1] = item
+                else:
+                    self.data[i] = item
         if not found:
             raise ValueError
 
@@ -190,7 +227,20 @@ class List:
         self.data[key] = value
 
     def __delitem__(self, key):
-        del self.data[key]
+        if key >= len(self):
+            raise IndexError
+
+        temp = self.data
+        if self.data.typecode == 'u':
+            self.data = array(self.data.typecode, ['0' for i in range(len(temp) - 1)])
+        else:
+            self.data = array(self.data.typecode, [0 for i in range(len(temp) - 1)])
+        for i, item in enumerate(temp):
+            if i < key:
+                self.data[i] = item
+            elif i>key:
+                self.data[i-1] = item
 
 # def __main__():
 #     print("start")
+
