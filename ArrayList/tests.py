@@ -45,6 +45,12 @@ class TestCase(unittest.TestCase):
         list3.clear()
         self.assertEqual(0, len(list3))
 
+        list_n = List('i', 1, 2, 1, 4)
+        list_r = List('i',4,1,2,1)
+        reversed(list_n)
+        self.assertEqual(list_n,list_r)
+
+
     def test_char(self):
         list = List('u', '1', '2', '3')
         self.assertEqual(3, len(list))
@@ -53,6 +59,7 @@ class TestCase(unittest.TestCase):
         list.extend("892")
         self.assertEqual(6, len(list))
         self.assertEqual('8', list[3])
+        self.assertEqual(list.__index__('8'),3)
 
 
 if __name__ == '__main__':

@@ -8,13 +8,13 @@ class Ptr:
         self.ptr = 0
 
     def __next__(self):
-        if self.ptr == len(self.data)-1:
+        if self.ptr == len(self.data):
             raise StopIteration
         self.ptr += 1
         return self.data[self.ptr]
 
     def prev(self):
-        if fabs(self.ptr) == len(self.data)-1:
+        if fabs(self.ptr) == len(self.data):
             raise StopIteration
         self.ptr -= 1
         return self.data[self.ptr]
@@ -213,18 +213,31 @@ class List:
                     self.data[i] = item
         if not found:
             raise ValueError
+        # print(temp)
 
     def __reversed__(self):
-        old = self.data
-        self.data = array(self.data.typecode)
-        for i in range(old.__len__() - 1, -1, -1):
-            self.append(old[i])
+        new = array(self.data.typecode)
+        ptr = iter(self)
+        try:
+           while True:
+               item = ptr.prev()
+               new += array(new.typecode,[item])
+        except StopIteration:
+            self.data = new
+            return
+
 
     def clear(self):
         self.data = array(self.data.typecode)
 
     def __setitem__(self, key, value):
         self.data[key] = value
+
+    def __index__(self, item):
+        for i,it in enumerate(self.data):
+            if(it==item):
+                return i
+        return ValueError
 
     def __delitem__(self, key):
         if key >= len(self):
@@ -241,6 +254,8 @@ class List:
             elif i>key:
                 self.data[i-1] = item
 
-# def __main__():
-#     print("start")
 
+
+# list = List("i",1,4,8,7,6)
+# list.remove(4)
+# print(list)
