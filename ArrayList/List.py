@@ -1,5 +1,6 @@
 from array import array
 from math import fabs
+from copy import deepcopy
 
 
 class Ptr:
@@ -197,7 +198,7 @@ class List:
         return temp[i]
 
     def remove(self, x):
-        temp = self.data
+        temp = deepcopy(self.data)
         if self.data.typecode == 'u':
             self.data = array(self.data.typecode, ['0' for i in range(len(temp)-1)])
         else:
